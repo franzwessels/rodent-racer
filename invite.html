@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rodent Racer Invite</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0D1117;
+      color: #E6EDF3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .card {
+      background: #161B22;
+      border: 1px solid #30363D;
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #00BCD4;
+    }
+    p {
+      color: #8B949E;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 12px;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: #00BCD4;
+      color: #000;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #8B949E;
+      border: 1px solid #30363D;
+    }
+    .status {
+      font-size: 13px;
+      color: #8B949E;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🐹</div>
+    <h1>You've been invited!</h1>
+    <p>Someone shared their Rodent Racer wheel with you. Open the app to start watching live stats.</p>
+    <button class="btn btn-primary" id="openBtn">Open in Rodent Racer</button>
+    <a class="btn btn-secondary" id="downloadBtn" href="#" style="display:none">
+      Download Rodent Racer
+    </a>
+    <p class="status" id="status"></p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    const openBtn = document.getElementById('openBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const status = document.getElementById('status');
+
+    if (!token) {
+      status.textContent = 'Invalid invite link.';
+      openBtn.disabled = true;
+    }
+
+    openBtn.addEventListener('click', () => {
+      const deepLink = `rodentracer://invite/${token}`;
+      status.textContent = 'Opening app...';
+      window.location.href = deepLink;
+
+      // If app doesn't open after 2 seconds, show download button
+      setTimeout(() => {
+        status.textContent = "App didn't open? Download it first.";
+        downloadBtn.style.display = 'block';
+        // TODO: replace with actual Play Store link when published
+        downloadBtn.href = 'https://play.google.com/store';
+      }, 2000);
+    });
+
+    // Auto-open on page load on mobile
+    if (/android/i.test(navigator.userAgent) && token) {
+      setTimeout(() => {
+        window.location.href = `rodentracer://invite/${token}`;
+      }, 500);
+    }
+  </script>
+</body>
+</html>
