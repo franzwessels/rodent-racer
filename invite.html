@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rodent Racer Invite</title>
+  <title>LittleLegs Invite</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -71,47 +71,40 @@
 </head>
 <body>
   <div class="card">
-    <div class="icon">🐹</div>
+    <div class="icon">🐾</div>
     <h1>You've been invited!</h1>
-    <p>Someone shared their Rodent Racer wheel with you. Open the app to start watching live stats.</p>
-    <button class="btn btn-primary" id="openBtn">Open in Rodent Racer</button>
+    <p>Someone shared their LittleLegs wheel with you. Open the app to start watching live stats.</p>
+    <button class="btn btn-primary" id="openBtn">Open in LittleLegs</button>
     <a class="btn btn-secondary" id="downloadBtn" href="#" style="display:none">
-      Download Rodent Racer
+      Download LittleLegs
     </a>
     <p class="status" id="status"></p>
   </div>
-
   <script>
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-
     const openBtn = document.getElementById('openBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const status = document.getElementById('status');
-
     if (!token) {
       status.textContent = 'Invalid invite link.';
       openBtn.disabled = true;
     }
-
     openBtn.addEventListener('click', () => {
-      const deepLink = `rodentracer://invite/${token}`;
+      const deepLink = `littlelegs://invite/${token}`;
       status.textContent = 'Opening app...';
       window.location.href = deepLink;
-
       // If app doesn't open after 2 seconds, show download button
       setTimeout(() => {
         status.textContent = "App didn't open? Download it first.";
         downloadBtn.style.display = 'block';
-        // TODO: replace with actual Play Store link when published
-        downloadBtn.href = 'https://play.google.com/store';
+        downloadBtn.href = 'https://play.google.com/store/apps/details?id=app.littlelegs.runner';
       }, 2000);
     });
-
     // Auto-open on page load on mobile
     if (/android/i.test(navigator.userAgent) && token) {
       setTimeout(() => {
-        window.location.href = `rodentracer://invite/${token}`;
+        window.location.href = `littlelegs://invite/${token}`;
       }, 500);
     }
   </script>
