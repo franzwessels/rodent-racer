@@ -81,15 +81,44 @@
     <p class="status" id="status"></p>
   </div>
   <script>
+    // ── Store URLs ──────────────────────────────────────────────
+    const STORE_URLS = {
+      ios: 'https://apps.apple.com/us/app/littlelegs/id6788909078',
+      android: 'https://play.google.com/store/apps/details?id=app.littlelegs.runner'
+    };
+
+    // ── Platform detection ──────────────────────────────────────
+    // Standard iPhone/iPod UA check, plus the iPadOS 13+ workaround:
+    // modern iPads report as "Macintosh" in the UA string but expose
+    // multi-touch, which a real Mac never does.
+    function detectPlatform() {
+      const ua = navigator.userAgent;
+      const isIOS =
+        /iPhone|iPad|iPod/i.test(ua) ||
+        (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+      if (isIOS) return 'ios';
+      if (/Android/i.test(ua)) return 'android';
+      return 'other';
+    }
+
+    const platform = detectPlatform();
+    const storeUrl = STORE_URLS[platform] || STORE_URLS.android; // fallback
+
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const openBtn = document.getElementById('openBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const status = document.getElementById('status');
+
+    // Wire up the download link immediately based on the VISITOR's
+    // platform — not the owner's, and not a hardcoded default.
+    downloadBtn.href = storeUrl;
+
     if (!token) {
       status.textContent = 'Invalid invite link.';
       openBtn.disabled = true;
     }
+
     openBtn.addEventListener('click', () => {
       const deepLink = `littlelegs://invite/${token}`;
       status.textContent = 'Opening app...';
@@ -98,11 +127,11 @@
       setTimeout(() => {
         status.textContent = "App didn't open? Download it first.";
         downloadBtn.style.display = 'block';
-        downloadBtn.href = 'https://play.google.com/store/apps/details?id=app.littlelegs.runner';
       }, 2000);
     });
-    // Auto-open on page load on mobile
-    if (/android/i.test(navigator.userAgent) && token) {
+
+    // Auto-open on page load on mobile (both platforms now, not just Android)
+    if ((platform === 'android' || platform === 'ios') && token) {
       setTimeout(() => {
         window.location.href = `littlelegs://invite/${token}`;
       }, 500);
